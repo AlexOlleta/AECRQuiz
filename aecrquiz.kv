@@ -1,0 +1,92 @@
+#:kivy 1.4
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+ScreenManagement:
+	MenuScreen:
+	QuizScreen:
+	EndScreen:
+
+<MenuScreen>:
+	name: 'menu'
+	BoxLayout:
+		orientation: "vertical"
+		padding: 20, 20
+		spacing: 30
+		Label:
+			padding: 10, 10
+			text: "AECR QUiz"
+			halign: "center"
+			valing: "middle"
+		Button:
+			text: "EMPEZAR"
+			on_release: 
+				app.root.current = 'quiz'
+				app.root.transition = SlideTransition(direction = 'right')
+		Button:
+			text: "CONFIGURACION"
+			on_release: 
+				app.open_settings()
+				app.root.transition = SlideTransition(direction = 'left')
+		Button:
+			text: "SALIR"
+			background_color: 1, 0, 0, 0.3
+			on_press: app.stop()
+
+<QuizScreen>:
+	name: 'quiz'
+	BoxLayout:
+		orientation: "vertical"
+		padding: 20, 20
+		spacing: 30
+		GridLayout:
+			cols: 3
+			Label:
+				text: "Time: 0"
+			Label:
+				text: "AECR Quiz"
+			Label:
+				text: "Pts: {0}".format(root.success)
+		Label:
+			text: root.question
+		Button:
+			id: first
+			text: root.answer1
+			background_color: root.color1
+			on_release: root.check_result(1)
+		Button:
+			id: second
+			text: root.answer2
+			background_color: root.color2
+			on_release: root.check_result(2)
+		Button:
+			id: third
+			text: root.answer3
+			background_color: root.color3
+			on_release: root.check_result(3)
+		GridLayout:
+			id: quiz_menu
+			cols: 2
+			Button:
+				spacing: 50
+				text: "FINALIZAR"
+				background_color: 0, 0, 1, 0.8
+				on_release:
+					app.root.get_screen('end').set_score(points = root.success, n = root.n)
+					app.root.current = 'end'
+					app.root.transition = SlideTransition(direction = 'right')	
+			Button:
+				id: next
+				spacing: 50
+				text: "SIGUIENTE"
+				background_color: 0, 0, 1, 0.8
+				on_release: root.next_question()
+
+<EndScreen>:
+	name: 'end'
+	BoxLayout:
+		orientation: "vertical"
+		Label:
+			text: "THE END"
+			font_size: '48sp'
+		Label:
+			text: root.message

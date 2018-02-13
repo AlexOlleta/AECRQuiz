@@ -1,0 +1,16 @@
+[
+	{
+		"question": "Significado de las siglas AECR", 
+		"answer1": "Asociaci\u00f3n Espa\u00f1ola del Cubo de Rubik", 
+		"answer2": "Asociaci\u00f3n Extreme\u00f1a del Cubo de Rubik",
+		"answer3": "Amigos de Espa\u00f1a del Cubo de Rubik",
+		"correct": "Asociaci\u00f3n Espa\u00f1ola del Cubo de Rubik"
+	},
+	{
+		"question": "Significado de las siglas WCA", 
+		"answer1": "World Cup Association", 
+		"answer2": "World Cube Association",
+		"answer3": "World Cubing Association",
+		"correct": "World Cube Association"		
+	}
+]

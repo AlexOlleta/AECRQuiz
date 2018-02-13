@@ -1,0 +1,35 @@
+[
+    {
+        "type": "title",
+        "title": "General"
+    },
+    {
+        "type": "bool",
+        "title": "Music",
+        "desc": "Set music reproduction or not",
+        "section": "main",
+        "key": "music"
+    },
+	{
+		"type": "numeric",
+		"title": "Font Size",
+		"desc": "Set text font size",
+		"section": "main",
+		"key": "font_size"
+	},
+	{
+		"type": "options",
+		"title": "Color",
+		"desc": "Set background color",
+		"section": "main",
+		"key": "back_color",
+		"options": ["black", "red", "green", "blue", "white"]
+	},
+	{
+		"type": "string",
+		"title": "Name",
+		"desc": "Set your name",
+		"section": "main",
+		"key": "name"
+	}
+]
