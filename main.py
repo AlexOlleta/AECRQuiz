@@ -8,10 +8,16 @@ import kivy
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
-from kivy.graphics import Color
 from kivy.uix.settings import Settings
 from kivy.uix.screenmanager import ScreenManager, Screen
+
+from kivy.clock import Clock
 from kivy.properties import StringProperty, ListProperty, NumericProperty
+
+from kivy.core.audio import SoundLoader, Sound
+from kivy.graphics import Color
+from kivy.core.window import Window
+from kivy.utils import get_color_from_hex
 
 from json import dumps, loads
 #from random import choice
@@ -28,22 +34,37 @@ class QuizScreen(Screen):
     color1, color2, color3 = ListProperty([1, 1, 1, 1]), ListProperty([1, 1, 1, 1]), ListProperty([1, 1, 1, 1])
     questions_list = ListProperty([])
     n, success = NumericProperty(), NumericProperty()
+    q_time = NumericProperty(10)
     
     def __init__(self, **kwargs):
         super(QuizScreen, self).__init__(**kwargs)
         self._get_questions()
-        self.start_quiz()
         
     def _get_questions(self):
         with open('questions.json','r') as f:
             self.questions_list = loads(f.read())
-            
+           
+    def start_time(self):
+        self.q_time = 10
+        Clock.schedule_interval(self._minus_one, 1)
+        
+    def _minus_one(self, dt):
+        if self.q_time > 0:
+            self.q_time -= 1
+        else:
+            self.stop_time()
+        
+    def stop_time(self):
+        Clock.unschedule(self._minus_one)
+        self._disable_buttons()
+    
     def _load_question(self, q):
         self.question = q["question"]
         self.answer1 = q["answer1"]
         self.answer2 = q["answer2"]
         self.answer3 = q["answer3"]
         self.correct = q["correct"]      
+        self.start_time()
         
     def _clean_buttons(self):
         self.color1[:2] = [1, 1]
@@ -75,6 +96,7 @@ class QuizScreen(Screen):
     def check_result(self, n):
         answers = [self.answer1, self.answer2, self.answer3]
         colors = [self.color1, self.color2, self.color3]
+        self.stop_time()
         self._disable_buttons()
         if answers[n-1] == self.correct:
             colors[n-1][1] = 255
@@ -100,12 +122,16 @@ class ScreenManagement(ScreenManager):
 class AECRQuizApp(App):
 
     def build(self):
+        self.sound = SoundLoader.load("sound/back_sound.mp3")
+        self.sound.loop = True
+        self.sound.volume = 0.5
+        self.sound.play()
         self.settings_cls = Settings
         with open("aecrquiz.kv", encoding='utf8') as f: 
             return Builder.load_string(f.read()) 
         
     def build_config(self, config):
-        config.setdefaults("main", {"music": False, "font_size": 12, 
+        config.setdefaults("main", {"music": False, "font_size": 15, 
                                     "back_color": "black", "name": "Username"})
     
     def build_settings(self, settings):
@@ -117,4 +143,5 @@ class AECRQuizApp(App):
             {"black": Color(1,1,1,1), "red": Color(1,0,0,1), "green": Color(0,1,0,1), "blue": Color(0,0,1,1), "white": Color(0,0,0,1)}
     
 if __name__ == '__main__':
+    Window.clearcolor = get_color_from_hex("#1c1c3d")
     AECRQuizApp().run()

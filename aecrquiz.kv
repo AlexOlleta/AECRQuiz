@@ -14,20 +14,25 @@ ScreenManagement:
 		spacing: 30
 		Label:
 			padding: 10, 10
-			text: "AECR QUiz"
+			text: "[color=#FFA500]AECR Quiz[/color]"
+			font_size: '48sp'
 			halign: "center"
 			valing: "middle"
+			markup: True
 		Button:
 			text: "EMPEZAR"
 			on_release: 
+				app.root.get_screen('quiz').start_quiz()
 				app.root.current = 'quiz'
 				app.root.transition = SlideTransition(direction = 'right')
 		Button:
+			size_hint_y: 0.5
 			text: "CONFIGURACION"
 			on_release: 
 				app.open_settings()
 				app.root.transition = SlideTransition(direction = 'left')
 		Button:
+			size_hint_y: 0.5
 			text: "SALIR"
 			background_color: 1, 0, 0, 0.3
 			on_press: app.stop()
@@ -41,11 +46,14 @@ ScreenManagement:
 		GridLayout:
 			cols: 3
 			Label:
-				text: "Time: 0"
+				text: "Time: {0}".format(root.q_time)
+				font_name: 'fonts/RobotoMono-Regular.ttf'
 			Label:
-				text: "AECR Quiz"
+				text: "[color=#FFA500]AECR Quiz[/color]"
+				markup: True
 			Label:
 				text: "Pts: {0}".format(root.success)
+				font_name: 'fonts/RobotoMono-Regular.ttf'
 		Label:
 			text: root.question
 		Button:
@@ -69,7 +77,7 @@ ScreenManagement:
 			Button:
 				spacing: 50
 				text: "FINALIZAR"
-				background_color: 0, 0, 1, 0.8
+				background_color: 1, 0, 0, 0.3
 				on_release:
 					app.root.get_screen('end').set_score(points = root.success, n = root.n)
 					app.root.current = 'end'
@@ -78,7 +86,7 @@ ScreenManagement:
 				id: next
 				spacing: 50
 				text: "SIGUIENTE"
-				background_color: 0, 0, 1, 0.8
+				background_color: 0, 0, 1, 0.3
 				on_release: root.next_question()
 
 <EndScreen>:
