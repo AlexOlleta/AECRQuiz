@@ -2,8 +2,10 @@
 #:import SlideTransition kivy.uix.screenmanager.SlideTransition
 
 ScreenManagement:
+	id: ScreenManagement
 	MenuScreen:
 	QuizScreen:
+		id: qs
 	EndScreen:
 
 <MenuScreen>:
@@ -55,20 +57,25 @@ ScreenManagement:
 				text: "Pts: {0}".format(root.success)
 				font_name: 'fonts/RobotoMono-Regular.ttf'
 		Label:
+			id: question
 			text: root.question
+			font_size: root.font_size
 		Button:
 			id: first
 			text: root.answer1
+			font_size: root.font_size
 			background_color: root.color1
 			on_release: root.check_result(1)
 		Button:
 			id: second
 			text: root.answer2
+			font_size: root.font_size
 			background_color: root.color2
 			on_release: root.check_result(2)
 		Button:
 			id: third
 			text: root.answer3
+			font_size: root.font_size
 			background_color: root.color3
 			on_release: root.check_result(3)
 		GridLayout:

@@ -13,7 +13,7 @@
 	{
 		"type": "numeric",
 		"title": "Font Size",
-		"desc": "Set text font size",
+		"desc": "Set text font size (max 30)",
 		"section": "main",
 		"key": "font_size"
 	},

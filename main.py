@@ -12,10 +12,9 @@ from kivy.uix.settings import Settings
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 from kivy.clock import Clock
-from kivy.properties import StringProperty, ListProperty, NumericProperty
+from kivy.properties import StringProperty, ListProperty, NumericProperty, ObjectProperty
 
-from kivy.core.audio import SoundLoader, Sound
-from kivy.graphics import Color
+from kivy.core.audio import SoundLoader
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 
@@ -35,6 +34,7 @@ class QuizScreen(Screen):
     questions_list = ListProperty([])
     n, success = NumericProperty(), NumericProperty()
     q_time = NumericProperty(10)
+    font_size = NumericProperty()
     
     def __init__(self, **kwargs):
         super(QuizScreen, self).__init__(**kwargs)
@@ -118,29 +118,75 @@ class EndScreen(Screen):
 class ScreenManagement(ScreenManager):
     pass
 
+class AudioManagement():
+    def load_audio(self, filename = "sound/back_sound.mp3", loop = True, volume = 0.5):
+        self.sound = SoundLoader.load(filename)
+        self.sound.loop = loop
+        self.sound.volume = volume
+        return self.sound
+                
+class FontManagement():
+    def load_font_size(self):
+        app = App.get_running_app()
+        self.font_size = float(app.config.get('main', 'font_size'))
+        app.manager.ids.qs.font_size = self.font_size
 
 class AECRQuizApp(App):
+    sound = ObjectProperty(None, allownone = True)
+    manager = ObjectProperty(None)
 
     def build(self):
-        self.sound = SoundLoader.load("sound/back_sound.mp3")
-        self.sound.loop = True
-        self.sound.volume = 0.5
-        self.sound.play()
-        self.settings_cls = Settings
         with open("aecrquiz.kv", encoding='utf8') as f: 
-            return Builder.load_string(f.read()) 
+            self.manager = Builder.load_string(f.read()) 
+            
+        self.settings_cls = Settings
+        self.use_kivy_settings = False
+        self.check_audio()
+        self.check_font()
+        
+        return self.manager
         
     def build_config(self, config):
-        config.setdefaults("main", {"music": False, "font_size": 15, 
-                                    "back_color": "black", "name": "Username"})
+        config.setdefaults("main", {"music": True, "font_size": 15, 
+                                    "back_color": "blue", "name": "Username"})
     
     def build_settings(self, settings):
         settings.add_json_panel("Settings", self.config, 'settings.json')
         
     def on_config_change(self, config, section, key, value):
         print(config, section, key, value)
-        if key == 'color':
-            {"black": Color(1,1,1,1), "red": Color(1,0,0,1), "green": Color(0,1,0,1), "blue": Color(0,0,1,1), "white": Color(0,0,0,1)}
+        if key == 'back_color':
+            self.check_color(value)            
+        elif key == 'music':
+            self.check_audio()
+        elif key == 'font_size':
+            self.check_font(value)
+                    
+    def check_audio(self):
+        if self.config.get('main', 'music') == '1':
+            self.sound = AudioManagement().load_audio()
+            self.sound.play()
+        else:
+            if self.sound:
+                self.sound.stop()
+                self.sound.unload()
+                self.sound = None
+                
+    def check_color(self, color):
+        op = {"black": get_color_from_hex("#000000"), 
+              "red": get_color_from_hex("#da2d37"), 
+              "green": get_color_from_hex("##70b790"), 
+              "blue": get_color_from_hex("#1c1c3d"), 
+              "white": get_color_from_hex("##f0f8ff")}
+        Window.clearcolor = op[color]
+        
+    def check_font(self, font_size = None):
+        if font_size is None:
+            FontManagement().load_font_size()
+        else:
+            if int(font_size) < 31:
+                self.manager.ids.qs.font_size = float(font_size)
+
     
 if __name__ == '__main__':
     Window.clearcolor = get_color_from_hex("#1c1c3d")
